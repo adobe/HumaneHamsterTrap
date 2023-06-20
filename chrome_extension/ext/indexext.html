@@ -1,0 +1,248 @@
+<!-- Generated file. DO NOT EDIT. 
+     This file was copied from the parent directory using
+     copytoext.sh
+     It is checked in for extension packing convenience only. -->
+
+<!-- 
+Copyright 2023 Adobe
+All Rights Reserved.
+
+NOTICE: Adobe permits you to use, modify, and distribute this file in
+accordance with the terms of the Adobe license agreement accompanying
+it.
+-->
+
+<!doctype html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Humane Hamster Trap: A WebGPU Capture Tool</title>
+    <style>
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0px;
+            border: 0px;
+            padding: 0px;
+            overflow: hidden;
+            font-family: system-ui;
+            font-size: smaller;
+        }
+
+        .container {
+            box-sizing: border-box;
+            border: 4px;
+            padding: 4px;
+            height: 100%;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 26px 480px 1fr;
+            overflow: hidden;
+            gap: 2px;
+        }
+        .actionbar {
+            grid-column: 1 / 4;
+            grid-row: 1;
+            overflow: clip;
+        }
+        .rendercanvas {
+            grid-column: 1 / 3;
+            grid-row: 2;
+            overflow: hidden;
+        }
+
+        .moveablecanvas {
+            position: relative;
+            top: 0px;
+            left: 0px;
+            transform: scale(1);
+            image-rendering: pixelated;
+        }
+        
+        .commandlistcontainer {
+            width: 100%;
+            height: 100%;
+            grid-column: 3;
+            grid-row: 2;
+            overflow: clip;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 26px 1fr;
+            gap:2px;
+        }
+        .commandlistcontrols {
+            width: 100%;
+            grid-column: 1;
+            grid-row: 1;
+            overflow: clip;
+        }
+        .commandlist {
+            width: 100%;
+            height: 100%;
+            grid-column: 1;
+            grid-row: 2;
+            overflow: auto;
+        }
+
+        .objectlistcontainer {
+            width: 100%;
+            height: 100%;
+            grid-column: 1;
+            grid-row: 3;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 26px 1fr;
+        }
+        .objectlistcontrols {
+            width: 100%;
+            grid-column: 1;
+            grid-row: 1;
+            overflow: clip;
+        }
+        .objectlist {
+            width: 100%;
+            height: 100%;
+            grid-column: 1;
+            grid-row: 2;
+            overflow: auto;
+        }
+
+        .listentry {
+            width: 100%;
+            overflow: clip;
+            background-color: white;
+        }
+        .listselected {
+            background-color: yellow;
+        }
+        .listdestroyed {
+            color: lightgray;
+        }
+        .listparams {
+            color: grey;
+        }
+        .listmark {
+            color:darkred;
+        }
+        .listasync {
+            color:darkgreen
+        }
+
+        .inspectorcontainer {
+            width: 100%;
+            height: 100%;
+            grid-column: 2/4;
+            grid-row: 3;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 26px 1fr;
+        }
+        .inspectorcontrols {
+            width: 100%;
+            grid-column: 1;
+            grid-row: 1;
+            overflow: clip;
+        }
+        .inspectorcontent {
+            width: 100%;
+            height: 100%;
+            grid-column: 1;
+            grid-row: 2;
+            overflow: auto;
+            font-family: monospace;
+            font-size: medium;
+        }
+        .inspectorname {
+            background-color: yellow;
+        }
+
+        .checkerboard {
+            background-image:
+                linear-gradient(45deg, #ccc 25%, transparent 25%), 
+                linear-gradient(135deg, #ccc 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #ccc 75%),
+                linear-gradient(135deg, transparent 75%, #ccc 75%);
+            background-size:25px 25px; /* Must be a square */
+            background-position:0 0, 12.5px 0, 12.5px -12.5px, 0px 12.5px; /* Must be half of one side of the square */
+        }
+    </style>
+  </head>
+  <body>
+    <input type="file" style="display:none" id="input_file"/>
+    <div class="container">
+
+        <div class="actionbar">
+            <button id="btn_load">Load</button>
+            <button id="btn_load_test">Load Test</button>
+        </div>
+
+        <div class="rendercanvas checkerboard" id="div_rendercanvas">
+            <canvas id="can_rendercanvas" class="moveablecanvas" width="256" height="256"></canvas>
+        </div>
+
+        <div class="commandlistcontainer">
+            <div class="commandlistcontrols">
+                <button id="btn_play_next">Step One</button>
+                <button id="btn_play_prev">Step Back</button>
+                <button id="btn_play_frame">Step Frame</button>
+                <button id="btn_play_all">Play to End</button>
+                <button id="btn_reset">Reset</button>
+            </div>
+            <div class="commandlist" id="div_commandlist">
+                List of objects will appear here.
+                Load a trace json to begin.
+            </div>
+        </div>
+
+        <div class="objectlistcontainer">
+            <div class="objectlistcontrols">
+                <!-- <button id="btn_filter">Filter</button> -->
+            </div>
+            <div class="objectlist" id="div_objectlist">
+                List of objects will appear here.
+                Create objects by stepping through commands.  
+            </div>
+        </div>
+
+        <div class="inspectorcontainer">
+            <div class="inspectorcontrols">
+                <span class="inspectorname" id="div_inspectorname">Object: Name (Type)</span>
+                <label for="sel_inspecttype">     Display as:</label>
+                <select id="sel_inspecttype">
+                    <option value="Text: UTF-8">Text: UTF-8</option>
+                    <option value="Raw: u8">Raw: u8</option>
+                    <option value="Raw: u16">Raw: u16</option>
+                    <option value="Raw: u32">Raw: u32</option>
+                    <option value="Raw: i8">Raw: i8</option>
+                    <option value="Raw: i16">Raw: i16</option>
+                    <option value="Raw: i32">Raw: i32</option>
+                    <option value="Raw: f16">Raw: f16</option>
+                    <option value="Raw: f32">Raw: f32</option>
+                    <option value="Image: rgba8unorm">Image: rgba8unorm</option>
+                    <option value="Image: xxxa8unorm">Image: xxxa8unorm</option>
+                    <option value="Image: rgbx8unorm">Image: rgbx8unorm</option>
+                    <option value="Image: rgba8unorm-srgb">Image: rgba8unorm-srgb</option>
+                    <option value="Image: bgra8unorm">Image: bgra8unorm</option>
+                    <option value="Image: bgra8unorm-srgb">Image: bgra8unorm-srgb</option>
+                    <option value="Image: rgba16float">Image: rgba16float</option>
+                    <option value="Image: rgba32float">Image: rgba32float</option>
+                    <option value="Image: depth24plus">Image: depth24plus</option>
+                    <option value="Image: depth32float">Image: depth32float</option>
+                </select>
+                <label for="in_inspectcols">Columns:</label>
+                <input type="number" id="in_inspectcols" value="8" min="1" max="8192">
+            </div>
+            <div class="inspectorcontent" id="div_inspectorcontent">
+                Select an inspectable object or buffer.
+            </div>
+        </div>
+
+
+    </div>  
+    <script src="./main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+body, html {
+    height: 300px;
+    width: 400px;
+    margin: 10px;
+    border: 0px;
+    padding: 0px;
+    overflow: hidden;
+    font-family: system-ui;
+    font-size: medium;
+}
+.title {
+    font-size: larger;
+    font-weight: bold;
+    grid-column: 2;
+    grid-row: 1;
+}
+.subtitle {
+    font-size: smaller;
+    grid-column: 2;
+    grid-row: 2;
+}
+.logo {
+  grid-column: 1;
+  grid-row: 1/3;
+}
+.header {
+  display:grid;
+  grid-template-columns: 80px 1fr;
+  grid-template-rows: 1fr 1fr;
+}

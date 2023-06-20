@@ -1,0 +1,45 @@
+{
+    "manifest_version": 3,
+    "name": "Humane Hamster Trap",
+    "description": "WebGPU Capture",
+    "version": "1.0",
+    "action": {
+      "default_popup": "extension.html",
+      "default_icon": "extension.png"
+    },
+    "background": {
+      "service_worker": "background.js",
+      "type": "module"
+    },
+    "permissions": [
+      "background",
+      "activeTab",
+      "scripting"
+    ],
+    "host_permissions": [
+      "https://*/*",
+      "http://*/*"
+    ],
+    "icons": {
+        "512": "extension.png"
+    },
+    "web_accessible_resources": [
+      {
+        "resources": [ 
+          "ext/indexext.html", 
+          "ext/main.js", 
+          "ext/readmeext.md", 
+          "ext/wgpucapext.js",
+          "startcapture.js"
+        ],
+        "matches": [       
+          "https://*/*",
+          "http://*/*" ]
+      }
+    ],
+    "externally_connectable": {
+      "matches": [       
+        "https://*/*",
+        "http://*/*" ]
+    }
+  }

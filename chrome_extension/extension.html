@@ -1,0 +1,42 @@
+<!-- 
+Copyright 2023 Adobe
+All Rights Reserved.
+
+NOTICE: Adobe permits you to use, modify, and distribute this file in
+accordance with the terms of the Adobe license agreement accompanying
+it.
+-->
+
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body >
+    <div class=header>
+      <img class="logo" src="./extension.png" alt="Hamster" width="64px" height="64px">
+      <div class="title">Humane Hamster Trap</div>
+      <div class="subtitle">A WebGPU capture tool</div>
+    </div>
+    <br>
+    <div>
+        <div id="div_sitename">(Site name)</div>
+        <br>
+        <label for="in_numframes">Number of frames:</label>
+        <input type="number" id="in_numframes" value="40" min="1" max="200">
+        <br>
+        <label for="in_debug">Debug log to console:</label>
+        <input type="checkbox" id="in_debug" value="false">
+        <br>
+        <div></div>
+        <br>
+        <button id="btn_run">Enable & Reload</button>
+        <button id="btn_openviewer">Open viewer</button>
+        <button id="btn_openreadme">Open ReadMe</button>
+        <br>
+        <div id="div_result"></div>
+    </div>
+    <script src="./extension.js" type="module"></script>
+  </body>
+
+</html>
