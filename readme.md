@@ -7,6 +7,10 @@ The Humane Hamster Trap is a debugging tool for WebGPU command stream capture an
 It was initially called only "Hamster Trap", because it captures WebGPU commands, which are are both fast and elusive like a Hamster.
 Later the "Humane" adjective was added to disuade any ideas that it might advocate for the mistreatment of Hamsters - or WebGPU commands.  
 
+## What does it look like?
+
+Scroll down to the bottom of this readme for some screen shots. 
+
 ## How to use
 
 ### Chrome Extension
@@ -107,5 +111,14 @@ Capturing in a worker does work when manually instrumenting capture.
 - Visualize timestamps
 - Fix Non-RAF based capture (https://webgpu.github.io/webgpu-samples/samples/videoUploadingWebCodecs) and imported textures 
 - Publish on Chrome extension web store
+
+## Screen shots
+
+Captures from the WebGPU samples:
+
+![Screenshot](screenshots/shot3.png?raw=true "Capture with Chrome extension")
+![Screenshot](screenshots/shot1.png?raw=true "Replay and inspect")
+![Screenshot](screenshots/shot2.png?raw=true "Another replay")
+
   
   
