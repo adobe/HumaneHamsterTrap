@@ -232,13 +232,28 @@ InjectQueue : function (queue, id) {
     queue.copyExternalImageToTexture = function ( source, dest, copysize ) {
         if ( !WGPUCapture.stopped ) {
             WGPUCapture.consolelog("copyExternalImageToTexture");
-            let datau8;
-            let h;
-            let w;
+            let datau8 = null;
+            let h = 0;
+            let w = 0;
             if ( !source.origin ) source.origin = { x:0, y:0 };
             if ( !source.flipY ) source.flipY = false;
             let realsource = source.source;
-            if ( realsource instanceof HTMLCanvasElement || realsource instanceof OffscreenCanvas ) {
+            if ( realsource instanceof HTMLVideoElement ) {
+                WGPUCapture.consolelog("Failed to capture external texture from video, not yet supported.")
+            }
+            if ( realsource instanceof HTMLCanvasElement ) {
+                let ctx2d = realsource.getContext('2d');
+                if ( ctx2d ) { 
+                    w = realsource.width - source.origin.x;
+                    h = realsource.height - source.origin.y;
+                    let imd = ctx2d.getImageData(source.origin.x,source.origin.y,w,h);
+                    datau8 = new Uint8Array(imd.data.buffer);
+                } else {
+                    // TODO: do a horrible dance with toDataURL 
+                    WGPUCapture.consolelog("Failed to capture external texture from canvas, only 2d supported right now.")
+                }
+            } 
+            if ( realsource instanceof OffscreenCanvas ) {
                 realsource = realsource.transferToImageBitmap();
             }
             if ( realsource instanceof ImageBitmap ) {
@@ -250,7 +265,7 @@ InjectQueue : function (queue, id) {
                 ctxtemp.drawImage(realsource, -source.origin.x, -source.origin.y);
                 let imd = ctxtemp.getImageData(0,0,w,h);
                 datau8 = new Uint8Array(imd.data.buffer);
-            } 
+            }
             // FIXME: handle source.source instanceof HTMLVideoElement
             if ( datau8 ) {
                 WGPUCapture.capturelog.push ( { time:performance.now(), 

@@ -7,6 +7,10 @@ The Humane Hamster Trap is a debugging tool for WebGPU command stream capture an
 It was initially called only "Hamster Trap", because it captures WebGPU commands, which are are both fast and elusive like a Hamster.
 Later the "Humane" adjective was added to disuade any ideas that it might advocate for the mistreatment of Hamsters - or WebGPU commands.  
 
+## What does it look like?
+
+Scroll down to the bottom of this readme for some screen shots. 
+
 ## How to use
 
 ### Chrome Extension
@@ -92,7 +96,6 @@ Capturing in a worker does work when manually instrumenting capture.
 - Fix device.getCurrentTexture(): need to emulate it for single stepping and reading
 - Make things work with WASM and WebGPUProxy
 - Implement step back 
-- Icon for extension (or check copyright on current one!)
 - Unmap with write should show source buffer in UI
 - Workaround adapter/device limits for replay, at least try to! 
 - Fix extension for worker case .. more. Especially for vite. 
@@ -103,12 +106,19 @@ Capturing in a worker does work when manually instrumenting capture.
 - Icons for play/step buttons
 - Readback depth24plus and depth24plus_stencil using shader
 - Alpha channel display for textures 
-- Offset/scale for texture vis
 - Support more texture formats (including compressed!)
 - Fix scroll lists to handle very large number of elements
 - Visualize timestamps
 - Fix Non-RAF based capture (https://webgpu.github.io/webgpu-samples/samples/videoUploadingWebCodecs) and imported textures 
-- Open source the thing as MIT and get external contributions
 - Publish on Chrome extension web store
+
+## Screen shots
+
+Captures from the WebGPU samples:
+
+![Screenshot](screenshots/shot3.png?raw=true "Capture with Chrome extension")
+![Screenshot](screenshots/shot1.png?raw=true "Replay and inspect")
+![Screenshot](screenshots/shot2.png?raw=true "Another replay")
+
   
   

@@ -152,6 +152,25 @@ async function init() {
     f32view[1] = 1.3;
     uniforms.unmap();
 
+    let texture = device.createTexture( {
+        size : { width: 256, height:256 },
+        format : "rgba8unorm",
+        usage : 2 | 4,
+    });
+
+    let canvas2 = document.createElement('canvas');
+    canvas2.width = 256;
+    canvas2.height = 256;
+    let ctx = canvas2.getContext('2d');
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0,0,256,256);
+
+    device.queue.copyExternalImageToTexture(
+        {source : canvas2},
+        {texture : texture},
+        {width:256, height:256}
+    )
+
     bindgroup = device.createBindGroup ({
         layout: pipeline.getBindGroupLayout(0), 
         entries: [ { binding: 0, resource: { buffer: uniforms } }, ]
