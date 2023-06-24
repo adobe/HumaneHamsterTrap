@@ -235,7 +235,12 @@ InjectQueue : function (queue, id) {
             let datau8 = null;
             let h = 0;
             let w = 0;
-            if ( !source.origin ) source.origin = { x:0, y:0 };
+            if ( !source.origin ) {
+                source.origin = { x:0, y:0 };
+            } else {
+                source.origin.x = source.origin.x | 0;
+                source.origin.y = source.origin.y | 0;
+            }
             if ( !source.flipY ) source.flipY = false;
             let realsource = source.source;
             if ( realsource instanceof HTMLVideoElement ) {

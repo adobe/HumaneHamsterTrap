@@ -15,8 +15,12 @@ chrome.action.setBadgeText({
 
 function CleanURL(url) {
     let end = url.indexOf("?");
-    if ( end == -1 ) return url; 
-    return url.slice(0, end)+"*";
+    if ( end!=-1 )
+       url = url.slice(0, end)+"*";
+    end = url.indexOf("#");
+    if (end != -1 )
+        url = url.slice(0, end)+"*";
+    return url;
 }
 
 let tab = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -59,8 +63,8 @@ document.getElementById("btn_run").addEventListener("click", async () => {
             sendResponse({capture_ext: "options", numframes:nf, debug:debugcheck});
         }
     }
+
     chrome.runtime.onMessage.addListener(HandleMessage);
     chrome.runtime.onMessageExternal.addListener(HandleMessage);
-
     await chrome.tabs.reload(tab[0].id);
 });
