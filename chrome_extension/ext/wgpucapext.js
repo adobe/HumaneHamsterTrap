@@ -728,7 +728,7 @@ DownloadBlob : function (blob, filename) {
     a.click();
 },
 
-capture_extid : "deonfghfkdlfcfklhgfefgoldkgmdffd",
+capture_extid : null,
 
 InjectWorkerConstructor : function () {
     // this is a bit of a mess: in order to inject our capture code into the worker
@@ -739,10 +739,20 @@ InjectWorkerConstructor : function () {
     // all calls made on it. once the async real worker is ready, it can replay all of those calls on it. 
 
     async function InjectFakeWorkerFromBlob(fakeworker, blob, fixupimports) {
-        let f1 = await fetch(`chrome-extension://${WGPUCapture.capture_extid}/ext/wgpucapext.js`);
-        let f2 = await fetch(`chrome-extension://${WGPUCapture.capture_extid}/startcapture.js`);
-        let b1 = await f1.blob();
-        let b2 = await f2.blob();
+        let blobs = [];
+        let ok = true;
+        let f1 = await fetch(`chrome-extension://${WGPUCapture.capture_extid}/ext/wgpucapext.js`).catch(()=>{ok=false;});
+        let f2 = await fetch(`chrome-extension://${WGPUCapture.capture_extid}/startcapture.js`).catch(()=>{ok=false;});
+        if ( !ok || !f1 || !f1.ok || !f2 || !f2.ok ) {
+            console.warn ( `WebGPUCapture: Could not fetch injection source for worker.\n`+
+                           `This is probably a mismatching extension id: ${WGPUCapture.capture_extid}.`+
+                           `You need to fix WGPUCapture.capture_extid in the source code to match your assigned extension id.`);
+        } else {
+            let b1 = await f1.blob();
+            let b2 = await f2.blob();
+            blobs.push(b1);
+            blobs.push(b2);
+        }
         let bt = await blob.text();
         let b3;
         if ( fixupimports ) {
@@ -755,11 +765,11 @@ InjectWorkerConstructor : function () {
                 console.log ( "Fixed import. Was:", matched, "Now:", cated);
                 return cated;
             });
-            b3 = new Blob([b1,b2,bt2], {type:"application/javascript"} );
+            blobs.push(bt2);
         } else {
-            b3 = new Blob([b1,b2,blob], {type:"application/javascript"} );
+            blobs.push(blob);
         }
-
+        b3 = new Blob(blobs, {type:"application/javascript"} );
         let bloburl = URL.createObjectURL(b3);
         let realworker = new WGPUCapture.capture_worker(bloburl, fakeworker.orgopts);
         console.log ("Made a real worker", fakeworker.orgopts);
@@ -784,6 +794,12 @@ InjectWorkerConstructor : function () {
                     this.realworker.postMessage(msg, transfer);
                 else
                     this.calllater.push({call:"postMessage", args:[msg,transfer]});
+            },
+            terminate : function ( ) {
+                if ( this.realworker )
+                    this.realworker.terminate();
+                else
+                    this.calllater.push({call:"terminate", args:[]});
             },
             addEventListener : function (a, b, c) {
                 if ( this.realworker )
@@ -830,13 +846,15 @@ InjectWorkerConstructor : function () {
                 f.blob().then(function(b) {
                     if ( ismodule )
                         baseurl = f.url.substring(0, f.url.lastIndexOf('/')+1); // or import.meta.url 
-                    let bt = b.text().then(function(bt) {
+                    /*let bt = b.text().then(function(bt) {
                         console.log ( "OG worker js as fetched: ", bt );
-                    });
+                    });*/
                     InjectFakeWorkerFromBlob(fakeworker, b, baseurl);
                 })
             }, function(reason) {
-                console.log ("Failed to fetch worker content:", url, reason);
+                console.warn ("Failed to fetch worker content for injection:", url, reason);
+                let realworker = new WGPUCapture.capture_worker(url, opts);
+                fakeworker.realIsReal(realworker);
             });
         }
         return fakeworker;
@@ -850,7 +868,7 @@ Init : function (opts) {
     WGPUCapture.isworker = (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope);
     WGPUCapture.framecount = 0;
     WGPUCapture.autostop = -1;
-    WGPUCapture.injectworkerapi = true;
+    WGPUCapture.injectworkerapi = false;
 
     if (opts) {
         if ( opts.hasOwnProperty("autostop") )

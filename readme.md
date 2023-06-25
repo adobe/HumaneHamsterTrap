@@ -75,14 +75,18 @@ The extension is working in some Module/Worker combinations but not all. Notably
 - Open the Chrome extensions page from the Chrome hamburger menu or go to ```chrome://extensions/```.
 - Slide the "Developer Mode" slider to the right.
 - Click "Load unpacked" and select the chrome_extension folder of this repo.
+- For full functionality, you now need to adjust the extension id in the code: (optional but recommended)
+- Find the line ```WGPUCapture.capture_extid = "iednipjajdnemnpfjnfgfpeecfmipjko"``` in chrome_extension/startcapture.js, and change it to the extension id assigned to you by chrome. It can be found on the ```chrome://extensions/``` page as well.
+- Refresh the extension 
 - Optionally pin the extension for easy access. 
 - Select the extension and click the "Enable & Reload" button. 
 - After n-frames a trace.json file will auto download. 
 - Click the "Open viewer" button, and from there the "Load" button.  
- 
+
 One good thing about this Chrome extension is that it has no default content scripts, so there is zero overhead for having it installed and enabled. 
 
-Note that extension capture currently does not work for WebGPU running in a worker. It's under TODO. 
+Note that extension capture currently does not work always for WebGPU running in a worker. 
+It does try instrumenting workers, but it can be flaky.
 Capturing in a worker does work when manually instrumenting capture. 
 
 ## Code guidelines 
