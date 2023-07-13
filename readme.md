@@ -7,6 +7,10 @@ The Humane Hamster Trap is a debugging tool for WebGPU command stream capture an
 It was initially called only "Hamster Trap", because it captures WebGPU commands, which are are both fast and elusive like a Hamster.
 Later the "Humane" adjective was added to disuade any ideas that it might advocate for the mistreatment of Hamsters - or WebGPU commands.  
 
+## Contact
+
+https://matrix.to/#/#HumaneHamsterTrap:matrix.org
+
 ## What does it look like?
 
 Scroll down to the bottom of this readme for some screen shots. 
@@ -99,6 +103,7 @@ Capturing in a worker does work when manually instrumenting capture.
 
 - Fix device.getCurrentTexture(): need to emulate it for single stepping and reading
 - Make things work with WASM and WebGPUProxy
+- Pretty print usage flags
 - Implement step back 
 - Unmap with write should show source buffer in UI
 - Workaround adapter/device limits for replay, at least try to! 
